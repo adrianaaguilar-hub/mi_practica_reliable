@@ -1,211 +1,77 @@
-# Reliable Data Link Protocol
+# Reliable Protocol Lab
 
-A small C networking project that implements a reliable stop-and-wait data link protocol on top of the provided UDP framework.
+> **Computer Networks practice** | Reliable data transfer over UDP
 
-The project is part of a computer networks lab focused on flow control, acknowledgements, checksums, timers, and retransmissions.
+This project implements **stop-and-wait ARQ** in C. The framework calls the protocol functions in [`21_reliable/reliable.c`](21_reliable/reliable.c).
 
-## Contents
+## What We Implemented
 
-- [What This Project Does](#what-this-project-does)
-- [Project Layout](#project-layout)
-- [Protocol At A Glance](#protocol-at-a-glance)
-- [How The Code Works](#how-the-code-works)
-- [Build](#build)
-- [Run Two Local Endpoints](#run-two-local-endpoints)
-- [Test With Errors](#test-with-errors)
-- [Debugging](#debugging)
-- [Current Scope](#current-scope)
-
-## What This Project Does
-
-The program transfers application data reliably between two endpoints. Each endpoint runs the same executable and communicates through UDP.
-
-The protocol uses **stop-and-wait ARQ**:
-
-1. The sender transmits one data packet.
-2. The sender starts a retransmission timer and pauses new application data.
-3. The receiver validates the checksum and accepts data only when it has the expected sequence number.
-4. The receiver sends an acknowledgement (ACK).
-5. The sender clears the timer and resumes transmission after receiving the expected ACK.
-6. If the timer expires first, the sender retransmits the same packet.
-
-## Project Layout
-
-| File | Purpose |
+| Callback | What it does |
 | --- | --- |
-| [`21_reliable/reliable.c`](21_reliable/reliable.c) | Student protocol implementation and callbacks. |
-| [`21_reliable/rlib.h`](21_reliable/rlib.h) | Framework API, packet definitions, and documentation. |
-| [`21_reliable/rlib.c`](21_reliable/rlib.c) | Framework implementation. It should not be modified. |
-| [`21_reliable/Makefile`](21_reliable/Makefile) | Build, debug, and clean commands. |
+| `connection_initialization` | Initializes sequence numbers, timeout, and state. |
+| `send_callback` | Reads data, sends one packet, starts timer `0`, and pauses new data. |
+| `receive_callback` | Validates packets, processes ACKs, accepts ordered data, and sends ACKs. |
+| `timer_callback` | Retransmits the last packet if its ACK does not arrive. |
 
-## Protocol At A Glance
+## Stop-and-Wait: Implemented ✅
+
+Only one packet is pending at a time. The sender does not advance to packet `N + 1` until it receives ACK `N`.
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Ready
-    Ready --> WaitingForAck: send_callback sends packet N
-    WaitingForAck --> Ready: valid ACK N
-    WaitingForAck --> WaitingForAck: timer expires / retransmit N
-    Ready --> Ready: receive expected data / accept data and send ACK
-    Ready --> Ready: receive duplicate data / send duplicate ACK
-    Ready --> Ready: corrupted packet / discard
+sequenceDiagram
+    participant A as Sender
+    participant B as Receiver
+    A->>B: DATA seq=1
+    B->>B: Validate checksum
+    B->>B: Accept data
+    B-->>A: ACK 1
+    A->>A: Stop timer and send next packet
+    A-->>B: Retransmit DATA 1 if timer expires
 ```
 
-### Packet Types
+`last_data` stores the current payload so the timer callback can retransmit it with the same sequence number.
 
-| Packet | Size | Important field |
-| --- | ---: | --- |
-| ACK-only packet | 8 bytes | `ackno` confirms a data packet. |
-| Data packet | 12 to 512 bytes | `seqno` identifies the packet and `data` contains the payload. |
+## Sliding Window: Not Implemented Yet 🚧
 
-The data packet header is 12 bytes, so the payload size is calculated as:
+Sliding window allows several packets to be sent before waiting for ACKs, improving throughput:
 
-```text
-payload_size = packet_length - DATA_PACKET_HEADER
+```mermaid
+sequenceDiagram
+    participant A as Sender
+    participant B as Receiver
+    A->>B: DATA 1
+    A->>B: DATA 2
+    A->>B: DATA 3
+    B-->>A: ACK 1
+    A->>B: DATA 4
+    B-->>A: ACK 2
+    B-->>A: ACK 3
 ```
 
-Sequence numbers start at `1`.
+This is an optional extension. The current code intentionally uses a window size of `1`.
 
-## How The Code Works
+## Run It
 
-### `connection_initialization`
-
-Initializes the stop-and-wait state:
-
-- stores the timeout value;
-- starts sending and receiving sequence numbers at `1`;
-- marks the sender as ready;
-- resets the last payload size.
-
-The `window_size` argument is intentionally ignored because this implementation uses a window of one packet.
-
-### `send_callback`
-
-Called when the application has data available. It:
-
-- reads up to `MAX_PAYLOAD` bytes with `READ_DATA_FROM_APP_LAYER`;
-- stores those bytes in `last_data` for possible retransmission;
-- sends the packet with `SEND_DATA_PACKET`;
-- starts timer `0`;
-- pauses new application data until the ACK arrives.
-
-### `receive_callback`
-
-Called for every received packet. It:
-
-- validates the checksum before trusting packet fields;
-- processes ACK packets and resumes transmission after the expected ACK;
-- accepts data only when its sequence number is the expected one;
-- sends an ACK for accepted data;
-- sends another ACK for duplicates without delivering duplicate data.
-
-### `timer_callback`
-
-Called when a framework timer expires. For timer `0`, it retransmits the saved payload with the same sequence number and starts the timer again.
-
-Keeping the same sequence number is essential: a timeout means that the current packet has not been confirmed, not that a new packet should be created.
-
-## Build
-
-Run these commands from the project directory:
+From `21_reliable/`:
 
 ```bash
-cd ~/mi_practica_reliable/21_reliable
 make
 ```
 
-Build a debug version with symbols:
-
-```bash
-make debug
-```
-
-Remove the generated executable:
-
-```bash
-make clean
-```
-
-The executable is named `reliable` and is generated inside `21_reliable/`.
-
-## Run Two Local Endpoints
-
-Open two WSL terminals. In both terminals:
-
-```bash
-cd ~/mi_practica_reliable/21_reliable
-```
-
-Terminal A listens on port `5555` and sends to port `6666`:
+Open two WSL terminals:
 
 ```bash
 ./reliable 5555 127.0.0.1:6666 -d 2
 ```
 
-Terminal B listens on port `6666` and sends to port `5555`:
-
 ```bash
 ./reliable 6666 127.0.0.1:5555 -d 2
 ```
 
-Write a line in either terminal. The receiving endpoint should display the delivered data.
+Test corruption with `-e 10`. Stop either endpoint with `Ctrl+C`.
 
-Stop each running endpoint with `Ctrl+C`.
+## Files
 
-## Test With Errors
-
-The framework can corrupt packets with a configurable probability. To test retransmissions, use the `-e` option:
-
-```bash
-./reliable 5555 127.0.0.1:6666 -e 10 -d 2
-```
-
-```bash
-./reliable 6666 127.0.0.1:5555 -e 10 -d 2
-```
-
-Useful error rates for the lab are `5`, `10`, and `25` percent.
-
-The protocol should continue delivering data in order. Corrupted packets should not be accepted, and missing ACKs should eventually cause retransmission.
-
-## Synthetic Traffic
-
-Use `-s` on both endpoints to enable the synthetic traffic generator:
-
-```bash
-./reliable 5555 127.0.0.1:6666 -s -d 1
-```
-
-```bash
-./reliable 6666 127.0.0.1:5555 -s -d 1
-```
-
-The statistics printed by the framework distinguish transmitted traffic from data accepted by the application. Retransmissions can make those values different, especially when errors are enabled.
-
-## Debugging
-
-The `-d` option controls framework debug output:
-
-| Level | Output |
-| ---: | --- |
-| `1` | Basic protocol activity. |
-| `2` | Packets, checksums, and timers. |
-| `3` | More detailed framework diagnostics. |
-
-Messages labelled `ERRORS` are a debug category. A line such as `Packet checksum validation: OK` means validation succeeded; it is not an actual failure.
-
-## Current Scope
-
-This repository currently implements the required **stop-and-wait** protocol with retransmission on timeout.
-
-Sliding-window support is not part of the current implementation. The framework accepts a `-w` option for that optional extension, but this protocol intentionally operates with a window size of `1`.
-
-## Learning Notes
-
-The most important invariant is:
-
-```text
-Do not advance to packet N + 1 until ACK N has been received.
-```
-
-When a timeout occurs, retransmit packet `N` with the same data and the same sequence number. This prevents lost ACKs from creating duplicate application data.
+- [`reliable.c`](21_reliable/reliable.c): protocol logic we implemented.
+- [`rlib.h`](21_reliable/rlib.h): framework API and packet definitions.
+- [`rlib.c`](21_reliable/rlib.c): framework internals; do not modify.
