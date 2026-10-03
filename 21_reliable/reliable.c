@@ -38,6 +38,7 @@ static uint32_t next_send_sequence;
 static uint32_t next_receive_sequence;
 static int waiting_for_ack;
 static int last_data_size;
+static char last_data[MAX_PAYLOAD];
 
 //------------------------------------------------------------------------------
 
@@ -65,13 +66,39 @@ void connection_initialization(int window_size, long timeout_in_ns)
 // This callback is called when a packet pkt of size pkt_size is received
 void receive_callback(packet_t *pkt, size_t pkt_size)
 {
-
+    (void)pkt;
+    (void)pkt_size;
 }
 
 // Callback called when the application has data to be sent
 void send_callback()
 {
+   int bytes_read;
 
+    if (waiting_for_ack == 1)
+    {
+        return;
+    }
+
+    bytes_read = READ_DATA_FROM_APP_LAYER(last_data, MAX_PAYLOAD);
+
+    if (bytes_read <= 0)
+    {
+        return;
+    }
+
+    last_data_size = bytes_read;
+
+    SEND_DATA_PACKET(
+        DATA_PACKET_HEADER + last_data_size,
+        0,
+        next_send_sequence,
+        last_data
+    );
+
+    waiting_for_ack = 1;
+    SET_TIMER(RETRANSMISSION_TIMER, timeout_ns);
+    PAUSE_TRANSMISSION();
 }
 
 /*
@@ -80,6 +107,7 @@ timer depends on the protocol programmer.
 */
 void timer_callback(int timer_number)
 {
+    (void)timer_number;
 }
 
 //------------------------------------------------------------------------------
