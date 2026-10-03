@@ -1,6 +1,3 @@
-<img width="686" height="364" alt="Captura de pantalla 2026-10-03 173517" src="https://github.com/user-attachments/assets/8049ab61-60b3-4972-b61d-40d990c29b6f" />
-
-
 # Reliable Protocol Lab
 
 > **Computer Networks practice** | Reliable data transfer over UDP
@@ -72,6 +69,12 @@ Open two WSL terminals:
 ```
 
 Test corruption with `-e 10`. Stop either endpoint with `Ctrl+C`.
+
+## Test Result
+
+The following local run shows packets, checksum validation, ACKs, timers, and transmission resuming after acknowledgement:
+
+<img width="686" height="364" alt="Stop-and-wait test result" src="https://github.com/user-attachments/assets/8049ab61-60b3-4972-b61d-40d990c29b6f" />
 
 ## Files
 
