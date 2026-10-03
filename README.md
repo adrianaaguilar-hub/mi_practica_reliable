@@ -1,5 +1,5 @@
+<img width="686" height="364" alt="Captura de pantalla 2026-10-03 173517" src="https://github.com/user-attachments/assets/8049ab61-60b3-4972-b61d-40d990c29b6f" />
 
-<img width="682" height="258" alt="Captura de pantalla 2026-10-03 173300" src="https://github.com/user-attachments/assets/a969e0d9-723d-4d28-9599-d1896d0f3bd2" />
 
 # Reliable Protocol Lab
 
