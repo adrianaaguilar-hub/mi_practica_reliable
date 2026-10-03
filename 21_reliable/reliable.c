@@ -66,8 +66,43 @@ void connection_initialization(int window_size, long timeout_in_ns)
 // This callback is called when a packet pkt of size pkt_size is received
 void receive_callback(packet_t *pkt, size_t pkt_size)
 {
-    (void)pkt;
-    (void)pkt_size;
+     if (!VALIDATE_CHECKSUM(pkt))
+    {
+        return;
+    }
+
+    if (pkt_size == ACK_PACKET_SIZE)
+    {
+        if (waiting_for_ack == 1 &&
+            pkt->ackno == next_send_sequence)
+        {
+            CLEAR_TIMER(RETRANSMISSION_TIMER);
+            waiting_for_ack = 0;
+            next_send_sequence++;
+            RESUME_TRANSMISSION();
+        }
+
+        return;
+    }
+
+    if (pkt->len < DATA_PACKET_HEADER ||
+        pkt->len > DATA_PACKET_HEADER + MAX_PAYLOAD)
+    {
+        return;
+    }
+
+     if (pkt->seqno == next_receive_sequence)
+    {
+        size_t data_size = pkt->len - DATA_PACKET_HEADER;
+
+        ACCEPT_DATA(pkt->data, data_size);
+        SEND_ACK_PACKET(pkt->seqno);
+        next_receive_sequence++;
+    }
+    else if (pkt->seqno < next_receive_sequence)
+    {
+        SEND_ACK_PACKET(pkt->seqno);
+    }
 }
 
 // Callback called when the application has data to be sent
