@@ -33,11 +33,11 @@ data is persistent and it can be accesed from all functions.
 
 #define RETRANSMISSION_TIMER 0
 
-static long retransmission_timeout;
-static uint32_t next_tx_seqno;
-static uint32_t next_rx_seqno;
+static long timeout_ns;
+static uint32_t next_send_sequence;
+static uint32_t next_receive_sequence;
 static int waiting_for_ack;
-static int last_payload_size;
+static int last_data_size;
 
 //------------------------------------------------------------------------------
 
@@ -55,11 +55,11 @@ void connection_initialization(int window_size, long timeout_in_ns)
 {
  (void)window_size;
 
-    retransmission_timeout = timeout_in_ns;
-    next_tx_seqno = 1;
-    next_rx_seqno = 1;
+    timeout_ns = timeout_in_ns;
+    next_send_sequence = 1;
+    next_receive_sequence = 1;
     waiting_for_ack = 0;
-    last_payload_size = 0;
+    last_data_size = 0;
 }
 
 // This callback is called when a packet pkt of size pkt_size is received
@@ -71,6 +71,7 @@ void receive_callback(packet_t *pkt, size_t pkt_size)
 // Callback called when the application has data to be sent
 void send_callback()
 {
+
 }
 
 /*
