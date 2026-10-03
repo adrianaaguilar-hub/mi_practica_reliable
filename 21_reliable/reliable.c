@@ -142,7 +142,20 @@ timer depends on the protocol programmer.
 */
 void timer_callback(int timer_number)
 {
-    (void)timer_number;
+    if (timer_number != RETRANSMISSION_TIMER ||
+        waiting_for_ack != 1)
+    {
+        return;
+    }
+
+    SEND_DATA_PACKET(
+        DATA_PACKET_HEADER + last_data_size,
+        0,
+        next_send_sequence,
+        last_data
+    );
+
+    SET_TIMER(RETRANSMISSION_TIMER, timeout_ns);
 }
 
 //------------------------------------------------------------------------------
