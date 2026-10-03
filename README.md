@@ -4,7 +4,7 @@
 
 This project implements **stop-and-wait ARQ** in C. The framework calls the protocol functions in [`21_reliable/reliable.c`](21_reliable/reliable.c).
 
-## What We Implemented
+## What I Implemented
 
 | Callback | What it does |
 | --- | --- |
