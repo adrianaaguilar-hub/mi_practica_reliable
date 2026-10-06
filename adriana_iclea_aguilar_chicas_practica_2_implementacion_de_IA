@@ -1,34 +1,34 @@
-DECLARACIÓN DE AUTORÍA
+AUTHORSHIP DECLARATION
 
-Yo, Adriana Iclea Aguilar Chicas, declaro que la entrega "Práctica 2: Implementación de un protocolo de control de flujo" de la asignatura IYA022 - Redes de Ordenadores es producto de mi autoría efectiva: las decisiones, el análisis y la elaboración intelectual sustantivos son míos.
+I, Adriana Iclea Aguilar Chicas, declare that the submission “Practice 2: Implementation of a flow control protocol” for the course IYA022 - Computer Networks is my own work: the substantial decisions, analysis, and intellectual work are mine.
 
-El uso de inteligencia artificial realizado en esta entrega, declarado aparte en la declaración de uso de IA, no sustituye mi autoría efectiva: el resultado es defendible y modificable por mí, conforme al guion de defensa oral.
+The use of artificial intelligence in this submission, declared separately in the AI use declaration, does not replace my authorship: the result is explainable and modifiable by me, in accordance with the oral defense guidelines.
 
-Todas las fuentes, datos y contribuciones de terceros están reconocidos y citados conforme a las normas aplicables. Asumo la responsabilidad académica sobre la veracidad, integridad y trazabilidad del trabajo entregado.
+All sources, data, and third-party contributions are acknowledged and cited according to the applicable rules. I accept academic responsibility for the accuracy, integrity, and traceability of the submitted work.
 
-Fecha: 2026-10-06
+Date: 2026-10-06
 
+AI USE DECLARATION
 
-DECLARACIÓN DE USO DE IA
+Course: IYA022 - Computer Networks
+Assignment: Practice 2: Implementation of a flow control protocol
+Assigned category: B (AI as a tool)
+Submission date: 2026-10-06
 
-Asignatura: IYA022 - Redes de Ordenadores
-Actividad / entrega: Práctica 2: Implementación de un protocolo de control de flujo
-Régimen asignado: B (IA como medio)
-Fecha de entrega: 2026-10-06
+I have used artificial intelligence in this assignment:
 
-He utilizado inteligencia artificial en esta entrega:
-1. Herramienta y versión: Gemini 3.1 Pro
-   Finalidad del uso: ayuda a instalación de Ubuntu y ayuda a comprender los temas de el ejercicio
-   Fase del trabajo en que intervino: Inicio del proyecto
+Tool and version: Gemini 3.1 Pro
+Purpose: assistance with Ubuntu installation and understanding the topics covered in the exercise
+Stage of the work: Project beginning
 
-2. Herramienta y versión: GPT-6 Luna
-   Finalidad del uso: ayuda con generación de código en c y verificación de la correcta implementación de las variables dentro del código
-   Fase del trabajo en que intervino: Revisión final
+Tool and version: GPT-6 Luna
+Purpose: assistance with generating C code and verifying the correct implementation of variables
+Stage of the work: Final review
 
-3. Herramienta y versión: GitHub Copilot
-   Finalidad del uso: reordenamiento de la estructura de readme de mi repositorio en github
-   Fase del trabajo en que intervino: final
+Tool and version: GitHub Copilot
+Purpose: reorganizing the README structure in my GitHub repository
+Stage of the work: Final stage
 
-Declaración de responsabilidad. Declaro que mi autoría efectiva no se ve sustituida por ningún uso de inteligencia artificial: el resultado entregado es defendible y modificable por mí, conforme al guion de defensa oral. Cualquier parte del trabajo que no pudiera explicar o modificar queda fuera del alcance de esta declaración; se resuelve en la conversación del guion de defensa oral, que distingue evaluación negativa (no aprendió) de fraude (defraudó) antes de concluir nada.
+Responsibility statement. I declare that my authorship has not been replaced by the use of artificial intelligence: the submitted work is explainable and modifiable by me, in accordance with the oral defense guidelines. Any part that I cannot explain or modify falls outside the scope of this declaration and will be addressed during the oral defense, which distinguishes between a negative assessment (lack of learning) and fraud (deception) before reaching a conclusion.
 
 Adriana Iclea Aguilar Chicas — 2026-10-06
