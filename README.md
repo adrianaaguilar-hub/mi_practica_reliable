@@ -52,9 +52,10 @@ This is an optional extension. The current code intentionally uses a window size
 
 ## Run It
 
-From `21_reliable/`:
+From WSL, enter the exercise directory and compile it:
 
 ```bash
+cd ~/mi_practica_reliable/21_reliable
 make
 ```
 
@@ -69,6 +70,12 @@ Open two WSL terminals:
 ```
 
 Test corruption with `-e 10`. Stop either endpoint with `Ctrl+C`.
+
+For example, to enable 10% packet corruption on the first endpoint:
+
+```bash
+./reliable 5555 127.0.0.1:6666 -d 2 -e 10
+```
 
 ## Test Result
 
