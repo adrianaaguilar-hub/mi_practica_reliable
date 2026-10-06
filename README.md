@@ -85,6 +85,6 @@ The following local run shows packets, checksum validation, ACKs, timers, and tr
 
 ## Files
 
-- [`reliable.c`](21_reliable/reliable.c): protocol logic we implemented.
+- [`reliable.c`](21_reliable/reliable.c): protocol logic I implemented with AI help.
 - [`rlib.h`](21_reliable/rlib.h): framework API and packet definitions.
 - [`rlib.c`](21_reliable/rlib.c): framework internals; do not modify.
